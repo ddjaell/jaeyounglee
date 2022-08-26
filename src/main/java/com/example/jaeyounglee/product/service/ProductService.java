@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +20,9 @@ public class ProductService {
 
     @Transactional
     public void createProduct(ProductRequest request) {
+        findProductById(request.getId()).ifPresent(product -> {
+            throw new RuntimeException("이미 존재하는 상품 ID입니다.");
+        });
         productRepository.save(ProductDAO.builder()
                 .id(request.getId())
                 .name(request.getName())
@@ -29,7 +33,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductResponse getProductDetail(ProductRequest request) {
 
-        ProductDAO product = this.findProductById(request.getId());
+        ProductDAO product = throwExceptionIfProductNotExist(request.getId());
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -46,19 +50,22 @@ public class ProductService {
 
     @Transactional
     public void updateProductDetail(ProductRequest request) {
-        ProductDAO product = this.findProductById(request.getId());
+        ProductDAO product = throwExceptionIfProductNotExist(request.getId());
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         productRepository.save(product);
     }
 
-    private ProductDAO findProductById(String id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 상품이 없습니다."));
+    private Optional<ProductDAO> findProductById(String id) {
+        return productRepository.findById(id);
+    }
+    private ProductDAO throwExceptionIfProductNotExist(String id) {
+        return findProductById(id).orElseThrow(() -> new RuntimeException("해당 상품이 없습니다."));
     }
 
     @Transactional
     public void deleteProduct(ProductRequest request) {
-        productRepository.deleteById(request.getId());
+        ProductDAO product = throwExceptionIfProductNotExist(request.getId());
+        productRepository.deleteById(product.getId());
     }
 }

@@ -1,0 +1,9 @@
+### Send POST request with json body
+POST localhost:8080/product
+Content-Type: application/json
+
+{
+  "id": "002",
+  "name": "banana",
+  "price": 5000
+}

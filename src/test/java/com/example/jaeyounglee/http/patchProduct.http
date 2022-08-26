@@ -1,0 +1,9 @@
+PATCH localhost:8080/product
+Content-Type: application/json
+
+{
+  "id": "001",
+  "name": "바나나 한송이",
+  "price": 2000
+
+}

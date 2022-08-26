@@ -1,0 +1,13 @@
+### Send POST request with json body
+PATCH localhost:8080/layout
+Content-Type: application/json
+
+{
+  "id": "001",
+  "name": "product list page 001",
+  "products": [
+    {
+      "id": "001"
+    }
+  ]
+}

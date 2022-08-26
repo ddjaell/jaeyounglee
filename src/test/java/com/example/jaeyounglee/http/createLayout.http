@@ -1,0 +1,16 @@
+### Send POST request with json body
+POST localhost:8080/layout
+Content-Type: application/json
+
+{
+  "id": "001",
+  "name": "productPage001",
+  "products": [
+    {
+      "id": "001"
+    },
+    {
+      "id": "002"
+    }
+  ]
+}
