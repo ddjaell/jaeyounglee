@@ -31,9 +31,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductResponse getProductDetail(ProductRequest request) {
+    public ProductResponse getProductDetail(String id) {
 
-        ProductDAO product = throwExceptionIfProductNotExist(request.getId());
+        ProductDAO product = throwExceptionIfProductNotExist(id);
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -64,8 +64,8 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(ProductRequest request) {
-        ProductDAO product = throwExceptionIfProductNotExist(request.getId());
-        productRepository.deleteById(product.getId());
+    public void deleteProduct(String id) {
+        ProductDAO product = throwExceptionIfProductNotExist(id);
+        productRepository.delete(product);
     }
 }

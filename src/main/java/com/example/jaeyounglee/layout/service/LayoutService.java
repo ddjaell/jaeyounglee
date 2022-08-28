@@ -74,6 +74,6 @@ public class LayoutService {
     @Transactional
     public void deleteLayout(String id) {
         LayoutDAO layout = throwExceptionIfLayoutNotExist(id);
-        layoutRepository.deleteById(id);
+        layoutRepository.delete(layout);
     }
 }

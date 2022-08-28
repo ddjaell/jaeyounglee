@@ -1,6 +1,2 @@
-DELETE localhost:8080/product
+DELETE localhost:8080/product/002
 Content-Type: application/json
-
-{
-  "id": "001"
-}

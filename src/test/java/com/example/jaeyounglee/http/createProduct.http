@@ -4,6 +4,6 @@ Content-Type: application/json
 
 {
   "id": "002",
-  "name": "banana",
+  "name": "바나나",
   "price": 5000
 }

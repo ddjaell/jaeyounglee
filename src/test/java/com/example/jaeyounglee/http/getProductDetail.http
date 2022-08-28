@@ -1,7 +1,2 @@
-GET localhost:8080/product
+GET localhost:8080/product/002
 Content-Type: application/json
-
-{
-  "id": "001"
-
-}
