@@ -1,5 +1,7 @@
 package com.example.jaeyounglee.layout.controller;
 
+import com.example.jaeyounglee.common.enums.ErrorCode;
+import com.example.jaeyounglee.common.exception.CommonException;
 import com.example.jaeyounglee.layout.model.LayoutRequest;
 import com.example.jaeyounglee.layout.model.LayoutResponse;
 import com.example.jaeyounglee.layout.service.LayoutService;

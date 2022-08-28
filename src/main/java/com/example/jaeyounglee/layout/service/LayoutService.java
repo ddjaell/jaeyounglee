@@ -1,5 +1,7 @@
 package com.example.jaeyounglee.layout.service;
 
+import com.example.jaeyounglee.common.enums.ErrorCode;
+import com.example.jaeyounglee.common.exception.CommonException;
 import com.example.jaeyounglee.layout.model.LayoutDAO;
 import com.example.jaeyounglee.layout.model.LayoutRequest;
 import com.example.jaeyounglee.layout.model.LayoutResponse;
@@ -8,14 +10,18 @@ import com.example.jaeyounglee.product.model.ProductDAO;
 import com.example.jaeyounglee.product.model.ProductResponse;
 import com.example.jaeyounglee.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.jaeyounglee.common.enums.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LayoutService {
     private final LayoutRepository layoutRepository;
     
@@ -37,17 +43,22 @@ public class LayoutService {
     @Transactional
     public void createLayout(LayoutRequest request) {
         findLayoutById(request.getId()).ifPresent(layout -> {
-            throw new RuntimeException("이미 존재하는 레이아웃입니다.");
+            throw new CommonException(ALREADY_EXIST_LAYOUT);
         });
-        layoutRepository.save(LayoutDAO.builder()
-                .id(request.getId())
-                .name(request.getName())
-                .products(request.getProducts().stream().map(product -> {
-                    return ProductDAO.builder()
-                            .id(product.getId())
-                            .build();
-                }).collect(Collectors.toList()))
-                .build());
+        try{
+            layoutRepository.save(LayoutDAO.builder()
+                    .id(request.getId())
+                    .name(request.getName())
+                    .products(request.getProducts().stream().map(product -> {
+                        return ProductDAO.builder()
+                                .id(product.getId())
+                                .build();
+                    }).collect(Collectors.toList()))
+                    .build());
+        }catch(Exception e) {
+            log.error(e.getMessage());
+            throw new CommonException(UNKNOWN_ERROR);
+        }
     }
 
     private Optional<LayoutDAO> findLayoutById(String id) {
@@ -57,7 +68,7 @@ public class LayoutService {
     private LayoutDAO throwExceptionIfLayoutNotExist(String id) {
         return findLayoutById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("해당 ID의 레이아웃이 존재하지 않습니다.")
+                        new CommonException(NOT_FOUND_LAYOUT)
                 );
     }
     @Transactional
@@ -69,11 +80,15 @@ public class LayoutService {
                     .id(product.getId())
                     .build();
         }).collect(Collectors.toList()));
-        layoutRepository.save(layout);
+        try{
+            layoutRepository.save(layout);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            throw new CommonException(UNKNOWN_ERROR);
+        }
     }
     @Transactional
     public void deleteLayout(String id) {
-        LayoutDAO layout = throwExceptionIfLayoutNotExist(id);
-        layoutRepository.delete(layout);
+        layoutRepository.delete(throwExceptionIfLayoutNotExist(id));
     }
 }

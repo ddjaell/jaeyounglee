@@ -7,9 +7,6 @@ Content-Type: application/json
   "name": "productPage001",
   "products": [
     {
-      "id": "001"
-    },
-    {
       "id": "002"
     }
   ]

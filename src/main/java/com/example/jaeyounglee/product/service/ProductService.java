@@ -1,5 +1,7 @@
 package com.example.jaeyounglee.product.service;
 
+import com.example.jaeyounglee.common.enums.ErrorCode;
+import com.example.jaeyounglee.common.exception.CommonException;
 import com.example.jaeyounglee.product.model.ProductDAO;
 import com.example.jaeyounglee.product.model.ProductRequest;
 import com.example.jaeyounglee.product.model.ProductResponse;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.jaeyounglee.common.enums.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -21,7 +25,7 @@ public class ProductService {
     @Transactional
     public void createProduct(ProductRequest request) {
         findProductById(request.getId()).ifPresent(product -> {
-            throw new RuntimeException("이미 존재하는 상품 ID입니다.");
+            throw new CommonException(ALREADY_EXIST_PRODUCT);
         });
         productRepository.save(ProductDAO.builder()
                 .id(request.getId())
@@ -60,12 +64,11 @@ public class ProductService {
         return productRepository.findById(id);
     }
     private ProductDAO throwExceptionIfProductNotExist(String id) {
-        return findProductById(id).orElseThrow(() -> new RuntimeException("해당 상품이 없습니다."));
+        return findProductById(id).orElseThrow(() -> new CommonException(NOT_FOUND_PRODUCT));
     }
 
     @Transactional
     public void deleteProduct(String id) {
-        ProductDAO product = throwExceptionIfProductNotExist(id);
-        productRepository.delete(product);
+        productRepository.delete(throwExceptionIfProductNotExist(id));
     }
 }
